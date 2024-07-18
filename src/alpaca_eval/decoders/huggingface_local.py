@@ -92,7 +92,14 @@ def huggingface_local_completions(
         use_fast=is_fast_tokenizer,
         **model_kwargs,
     )
-    model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, **model_kwargs).eval()
+
+    if "mamba" in model_name:
+        print("model_name:", model_name)
+        from mamba.hybrid_wrapper import MambaTransformerHybridModelWrapper
+        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model.eval()
+        print(model)
+    else:
+        model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, **model_kwargs).eval()
 
     if adapters_name:
         logging.info(f"Merging adapter from {adapters_name}.")
