@@ -96,8 +96,13 @@ def huggingface_local_completions(
     if "mamba" in model_name:
         print("model_name:", model_name)
         from mamba.hybrid_wrapper import MambaTransformerHybridModelWrapper
-        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model.eval()
-        print(model)
+        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model
+        model.config.use_cache = False
+        model.generation_config.use_cache = False
+        model=model.eval()
+        print(model.config.use_cache)
+        print(model.generation_config.use_cache)
+        print("============")
     else:
         model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, **model_kwargs).eval()
 
