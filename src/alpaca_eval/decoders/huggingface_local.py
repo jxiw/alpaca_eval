@@ -93,7 +93,16 @@ def huggingface_local_completions(
         **model_kwargs,
     )
 
-    if "mamba" in model_name:
+    if "mamba2" in model_name:
+        print("mamba2 model_name:", model_name)
+        from mamba2.hybrid_wrapper import MambaTransformerHybridModelWrapper
+        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model.cuda()
+        model.config.use_cache = False
+        model.generation_config.use_cache = False
+        model.eval()
+        print(model)
+        print("************")
+    elif "mamba" in model_name:
         print("model_name:", model_name)
         from mamba.hybrid_wrapper import MambaTransformerHybridModelWrapper
         model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model
