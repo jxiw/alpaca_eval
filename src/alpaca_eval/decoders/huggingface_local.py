@@ -93,24 +93,14 @@ def huggingface_local_completions(
         **model_kwargs,
     )
 
-    if "mamba2" in model_name:
-        print("mamba2 model_name:", model_name)
-        from mamba2.hybrid_wrapper import MambaTransformerHybridModelWrapper
-        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model.cuda()
-        model.config.use_cache = False
-        model.generation_config.use_cache = False
+    if "mamba2" in model_name.lower():
+        from mamba2_inference.hybrid_wrapper import MambaTransformerHybridModelWrapper
+        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16)
         model.eval()
-        print(model)
-        print("************")
-    elif "mamba" in model_name:
-        print("model_name:", model_name)
-        from mamba.hybrid_wrapper import MambaTransformerHybridModelWrapper
-        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16).model
-        model.config.use_cache = False
-        model.generation_config.use_cache = False
-        model=model.eval()
-        print(model.config.use_cache)
-        print(model.generation_config.use_cache)
+    elif "mamba" in model_name.lower():
+        from mamba_inference.hybrid_wrapper import MambaTransformerHybridModelWrapper
+        model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+        model.eval()
         print("============")
     else:
         model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, **model_kwargs).eval()
