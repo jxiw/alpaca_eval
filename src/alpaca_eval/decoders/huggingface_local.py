@@ -101,7 +101,6 @@ def huggingface_local_completions(
         from mamba_inference.hybrid_wrapper import MambaTransformerHybridModelWrapper
         model = MambaTransformerHybridModelWrapper.from_pretrained(model_name, torch_dtype=torch.bfloat16)
         model.eval()
-        print("============")
     else:
         model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, **model_kwargs).eval()
 
